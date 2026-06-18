@@ -1,15 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { fetchNotes } from '../../../../lib/api';
-import { useDebouncedCallback } from 'use-debounce';
-import css from './NotesPage.module.css'; 
-import SearchBox from '../../../../components/SearchBox/SearchBox';
-import Pagination from '../../../../components/Pagination/Pagination';
-import NoteForm from '../../../../components/NoteForm/NoteForm';
-import Modal from '../../../../components/Modal/Modal';
-import NoteList from '../../../../components/NoteList/NoteList';
+import Link from "next/link";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { fetchNotes } from "../../../../lib/api";
+import { useDebouncedCallback } from "use-debounce";
+import css from "./NotesPage.module.css";
+import SearchBox from "../../../../components/SearchBox/SearchBox";
+import Pagination from "../../../../components/Pagination/Pagination";
+import NoteList from "../../../../components/NoteList/NoteList";
+import { useState } from "react";
 
 interface NotesClientProps {
   tag: string;
@@ -17,9 +16,7 @@ interface NotesClientProps {
 
 export default function NotesClient({ tag }: NotesClientProps) {
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  // const perPage = 12;
+  const [search, setSearch] = useState("");
 
   const debouncedSearch = useDebouncedCallback((value: string) => {
     setSearch(value);
@@ -27,11 +24,11 @@ export default function NotesClient({ tag }: NotesClientProps) {
   }, 500);
 
   const { data, isLoading, isError, isPlaceholderData } = useQuery({
-  queryKey: ['notes', page, search, tag],
-  queryFn: () => fetchNotes(search, page, tag), 
-  placeholderData: keepPreviousData,
-  refetchOnMount: false,
-});
+    queryKey: ["notes", page, search, tag],
+    queryFn: () => fetchNotes(search, page, tag),
+    placeholderData: keepPreviousData,
+    refetchOnMount: false,
+  });
 
   const notes = data?.notes || [];
   const pageCount = data?.totalPages || 0;
@@ -47,13 +44,9 @@ export default function NotesClient({ tag }: NotesClientProps) {
             onPageChange={(selectedItem) => setPage(selectedItem.selected + 1)}
           />
         )}
-        <button
-          type="button"
-          className={css.button}
-          onClick={() => setIsModalOpen(true)}
-        >
+        <Link href="/notes/action/create" className={css.button}>
           Create note +
-        </button>
+        </Link>
       </header>
 
       <main>
@@ -65,17 +58,9 @@ export default function NotesClient({ tag }: NotesClientProps) {
             isError={isError}
           />
         ) : (
-          !isLoading && !isError && (
-            <p className={css.empty}>No notes found</p>
-          )
+          !isLoading && !isError && <p className={css.empty}>No notes found</p>
         )}
       </main>
-
-      {isModalOpen && (
-        <Modal onClose={() => setIsModalOpen(false)}>
-          <NoteForm onClose={() => setIsModalOpen(false)} />
-        </Modal>
-      )}
     </div>
   );
 }

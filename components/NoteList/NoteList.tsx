@@ -4,7 +4,7 @@ import { deleteNote } from '../../lib/api';
 import Loader from '@/components/Status/Loader';
 import ErrorMessage from '@/components/Status/ErrorMessage';
 import EmptyState from '@/components/Status/EmptyState';
-import type { NoteWithTag } from '../../lib/api'; // імпортуємо новий тип
+import type { NoteWithTag } from '../../lib/api'; 
 import css from './NoteList.module.css';
 
 interface NoteListProps {
